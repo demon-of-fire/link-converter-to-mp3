@@ -1,1 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Media Downloader</title>
+    <style>
+        /* CSS Variables for easy theme switching */
+        :root {
+            --bg-color: #000000;
+            --text-color: #ffffff;
+            --input-bg: #1a1a1a;
+            --input-border: #333333;
+            --btn-bg: #ffffff;
+            --btn-text: #000000;
+            --btn-hover: #cccccc;
+        }
 
+        /* Light Mode Variables */
+        body.light-mode {
+            --bg-color: #ffffff;
+            --text-color: #000000;
+            --input-bg: #f4f4f4;
+            --input-border: #cccccc;
+            --btn-bg: #000000;
+            --btn-text: #ffffff;
+            --btn-hover: #333333;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        /* Top Left Toggle */
+        .theme-toggle {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background-color: var(--btn-bg);
+            color: var(--btn-text);
+            border: none;
+            padding: 10px 16px;
+            font-size: 14px;
+            font-weight: bold;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .theme-toggle:hover {
+            background-color: var(--btn-hover);
+        }
+
+        /* Top Middle Container */
+        .main-container {
+            margin-top: 80px; /* Pushes the container down to the top-middle */
+            width: 100%;
+            max-width: 450px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        /* Form Elements */
+        select, input, button.download-btn {
+            width: 100%;
+            padding: 14px;
+            font-size: 16px;
+            border-radius: 6px;
+            border: 1px solid var(--input-border);
+            background-color: var(--input-bg);
+            color: var(--text-color);
+            box-sizing: border-box;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        select:focus, input:focus {
+            border-color: #888888;
+        }
+
+        button.download-btn {
+            background-color: var(--btn-bg);
+            color: var(--btn-text);
+            font-weight: bold;
+            font-size: 18px;
+            cursor: pointer;
+            border: none;
+            margin-top: 10px;
+            transition: background-color 0.2s;
+        }
+
+        button.download-btn:hover {
+            background-color: var(--btn-hover);
+        }
+    </style>
+</head>
+<body>
+
+    <button class="theme-toggle" id="themeToggle">Light Mode</button>
+
+    <div class="main-container">
+        
+        <select id="platformSelect">
+            <option value="youtube">YouTube</option>
+            <option value="spotify">Spotify</option>
+            <option value="soundcloud">SoundCloud</option>
+            <option value="other">Other Link</option>
+        </select>
+
+        <input type="text" id="linkInput" placeholder="Paste your link here...">
+
+        <select id="formatSelect">
+            <option value="mp4">MP4 (Video)</option>
+            <option value="mp3">MP3 (Audio)</option>
+        </select>
+
+        <select id="qualitySelect">
+            </select>
+
+        <button class="download-btn" id="downloadBtn">Download</button>
+
+    </div>
+
+    <script>
+        // --- 1. Light/Dark Mode Logic ---
+        const themeToggleBtn = document.getElementById('themeToggle');
+        const body = document.body;
+
+        themeToggleBtn.addEventListener('click', () => {
+            body.classList.toggle('light-mode');
+            
+            // Update button text based on current mode
+            if (body.classList.contains('light-mode')) {
+                themeToggleBtn.textContent = 'Dark Mode';
+            } else {
+                themeToggleBtn.textContent = 'Light Mode';
+            }
+        });
+
+        // --- 2. Dynamic Quality Logic ---
+        const formatSelect = document.getElementById('formatSelect');
+        const qualitySelect = document.getElementById('qualitySelect');
+
+        // Dictionary holding the quality options for each format
+        const qualityOptions = {
+            mp4: ['4K', '1080p', '720p', '480p', '360p'],
+            mp3: ['320 kbps', '256 kbps', '192 kbps', '128 kbps']
+        };
+
+        function updateQualityDropdown() {
+            const selectedFormat = formatSelect.value;
+            const options = qualityOptions[selectedFormat];
+            
+            // Clear current options
+            qualitySelect.innerHTML = '';
+            
+            // Add new options based on the selected format
+            options.forEach(quality => {
+                const opt = document.createElement('option');
+                opt.value = quality;
+                opt.textContent = quality;
+                qualitySelect.appendChild(opt);
+            });
+        }
+
+        // Initialize the dropdown on page load
+        updateQualityDropdown();
+
+        // Listen for format changes and update quality accordingly
+        formatSelect.addEventListener('change', updateQualityDropdown);
+
+        // --- 3. Download Button Logic ---
+        const downloadBtn = document.getElementById('downloadBtn');
+        
+        downloadBtn.addEventListener('click', () => {
+            const link = document.getElementById('linkInput').value;
+            const platform = document.getElementById('platformSelect').value;
+            const format = formatSelect.value;
+            const quality = qualitySelect.value;
+
+            if (link.trim() === '') {
+                alert('Please paste a link first!');
+                return;
+            }
+
+            // This is where you would connect to your backend!
+            alert(`Ready to download!\n\nPlatform: ${platform}\nLink: ${link}\nFormat: ${format}\nQuality: ${quality}`);
+        });
+    </script>
+</body>
+</html>
